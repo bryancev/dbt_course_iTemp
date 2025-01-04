@@ -1,0 +1,152 @@
+sources:
+  - name: demo_src
+    description: Данные из БД авиаперелетов
+    database: dwh_flight
+    schema: demo_src
+    tables:
+      - name: aircrafts
+        description: '{{ doc("aircrafts_description") }}'
+        columns: 
+          - name: aircraft_code
+            description: >
+              Код самолета, IATA.
+              Состоит из трех латинских букв.
+            tests:
+              - not_null
+              - unique
+          - name: model
+            description: Модель самолета
+          - name: range
+            description: Максимальная дальность полета, км
+      - name: airports
+        description: Аэропорты
+        columns: 
+          - name: airport_code
+            description: Код аэропорта
+          - name: airport_name
+            description: Название аэропорта
+          - name: city
+            description: Город
+          - name: coordinates
+            description: Координаты аэропорта (долгота и широта)
+          - name: timezone
+            description: Часовой пояс аэропорта
+      - name: seats
+        description: Места в самолетах
+        columns: 
+          - name: aircraft_code
+            description: Код модели самолета
+          - name: seat_no
+            description: Номер места
+          - name: fare_conditions
+            description: Класс места
+      - name: bookings
+        columns:
+          - name: book_ref
+            description: Номер бронирования
+          - name: book_date
+            description: Дата бронирования
+          - name: total_amount
+            description: Полная сумма бронирования
+        freshness:
+          warn_after:
+            count: 6000000
+            period: hour
+          error_after:
+            count: 10000
+            period: day
+          filter: current_timestamp::date - book_date::date < 30000
+        loaded_at_field: book_date::timestamp
+
+      # home work
+      - name: boarding_passes
+        description: Посадочные талоны
+        columns:
+          - name: ticket_no
+            description: Номер билета
+          - name: flight_id
+            description: Идентификатор рейса
+          - name: boarding_no
+            description: Номер посадочного талона
+          - name: seat_no
+            description: >
+              Номер места.
+              Состоит из четырех символов.
+      - name: flights
+        description: Рейсы
+        columns:
+          - name: flight_id
+            description: Идентификатор рейса
+          - name: flight_no
+            description: Номер рейса
+          - name: scheduled_departure
+            description: Время вылета по расписанию
+          - name: scheduled_arrival
+            description: Время прилёта по расписанию
+          - name: departure_airport
+            description: Аэропорт отправления
+            tests:
+              - not_null
+          - name: arrival_airport
+            description: Аэропорт прибытия
+            tests:
+              - not_null
+          - name: status
+            description: Статус рейса
+          - name: aircraft_code
+            description: >
+              Код самолета, IATA.
+              Состоит из трех латинских букв.
+            tests:
+              - not_null
+          - name: actual_departure
+            description: Фактическое время вылета
+            freshness:
+              warn_after:
+                count: 1000
+                period: hour
+              error_after:
+                count: 1000
+                period: day
+              filter: current_timestamp::date - actual_departure::date < 3000
+            loaded_at_field: actual_departure::timestamp
+
+          - name: actual_arrival
+            description: Фактическое время прилёта
+        
+      - name: ticket_flights
+        description: Перелеты
+        columns:
+          - name: ticket_no
+            description: Номер билета
+            tests:
+              - not_null
+          - name: flight_id
+            description: Идентификатор рейса
+            tests:
+              - not_null
+          - name: fare_conditions
+            description: Класс обслуживания
+            tests:
+              - not_null
+          - name: amount
+            description: Стоимость перелета
+            tests:
+              - not_null
+
+      - name: tickets
+        description: Билеты
+        columns:
+          - name: ticket_no
+            description: Номер билета
+            tests:
+              - not_null
+              - unique
+          - name: book_ref
+            description: Номер бронирования
+          - name: passenger_id
+            description: Идентификатор пассажира
+          - name: passenger_name
+            description: Имя пассажира
+          - name: contact_data
+            description: Контактные данные пассажира
