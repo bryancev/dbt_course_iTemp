@@ -14,4 +14,4 @@ SELECT
 FROM 
     {{ ref('stg_flights__tickets') }}
 
-WHERE passenger_id NOT IN (SELECT passenger_id FROM {{ ref('employees_tickets') }});
+WHERE passenger_id NOT IN (SELECT passenger_id FROM {{ ref('employees_tickets') }})
