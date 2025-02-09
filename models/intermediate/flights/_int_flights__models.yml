@@ -1,6 +1,6 @@
 models:
   - name: fct_bookings
-    description: Факты бронирования
+    description: Факты бронирований
     docs:
       show: true
       node_color: red
@@ -8,20 +8,25 @@ models:
     versions:
       - v: 1
     config:
-      contract: {enforced: true}
-    meta:
-      owner: "ab@mail.ru"
-      contact_tg: ab
-      status: in_dev
-    
+      contract: { enforced: true }
+      meta: {owner: "yml_file_owner@gmail.com", status: in_dev, my_meta: new}
     columns:
       - name: book_ref
+        description: Идентификатор бронирования
         data_type: varchar(8)
         constraints:
           - type: not_null
+        tags:
+          - "fact"
+          - "fligths"
+        tests:
+          - not_null,
+          - unique
       - name: book_date
+        description: Дата Бронирования
         data_type: timestamptz
       - name: total_amount
+        description: Сумма бронирования
         data_type: numeric(10, 2)
         constraints:
           - type: check
@@ -30,3 +35,4 @@ models:
           - not_null
         meta:
           owner: finance_team
+        quote: false

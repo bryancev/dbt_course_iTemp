@@ -13,12 +13,21 @@ models:
       - name: ticket_no
         description: Номер билета
         data_type: bpchar(13)
+        constraints:
+          - type: not_null
       - name: flight_id
         description: Идентификатор рейса
         data_type: int4
+        constraints:
+          - type: not_null
       - name: fare_conditions
         description: Класс обслуживания
         data_type: varchar(10)
+        constraints:
+        - type: not_null
       - name: amount
         description: Стоимость перелета
         data_type: numeric(10, 2)
+        constraints:
+          - type: check
+            expression: "amount > 0"
