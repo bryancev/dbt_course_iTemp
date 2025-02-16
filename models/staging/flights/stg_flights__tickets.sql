@@ -14,4 +14,6 @@ SELECT
 FROM 
     {{ source('demo_src', 'tickets') }}
 
-  
+{% if target.name == 'dev' %}
+LIMIT 100000
+{% endif %} 
